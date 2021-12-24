@@ -80,7 +80,7 @@ int main()
  
  
  
-    fp = fopen("sum_of_terms.asm","r");
+    fp = fopen("assembly.asm","r");
  
     if (fp != NULL)
     {
@@ -123,7 +123,7 @@ int main()
                     op1 = strtok(NULL,"\n\t\r ");                //get the 1st operand of ld, which is the destination register
                     op2 = strtok(NULL,"\n\t\r ");                //get the 2nd operand of ld, which is the source register
                     ch = (op1[0]-48)| ((op2[0]-48) << 3);        //form bits 11-0 of machine code. 48 is ASCII value of '0'
-                    program[counter]=0x2000+((ch)&0x00ff);       //form the instruction and write it to memory
+                    program[counter]=0x2000+((ch)&0x003f);       //form the instruction and write it to memory
                     counter++;                                   //skip to the next empty location in memory
                 }
                 else if (strcmp(token,"st")==0) //-------------ST INSTRUCTION--------------------
@@ -131,7 +131,7 @@ int main()
                     op1 = strtok(NULL,"\n\t\r ");                
                     op2 = strtok(NULL,"\n\t\r ");
                     chch = ((op1[0]-48)<<3)| ((op2[0]-48) << 6);        //form bits 11-0 of machine code. 48 is ASCII value of '0'
-                    program[counter]=0x3000+((chch)&0x01ff);       //form the instruction and write it to memory
+                    program[counter]=0x3000+((chch)&0x01f8);       //form the instruction and write it to memory
                     counter++;     
                 }
                 else if (strcmp(token,"jz")==0) //------------- CONDITIONAL JUMP ------------------
@@ -161,8 +161,8 @@ int main()
                     op1 = strtok(NULL,"\n\t\r ");    
                     op2 = strtok(NULL,"\n\t\r ");
                     op3 = strtok(NULL,"\n\t\r ");
-                    chch = (op1[0]-48)| ((op2[0]-48)<<3)|((op3[0]-48)<<6);  
-                    program[counter]=0x7000+((chch)&0x00ff); 
+                    chch = (op1[0]-48)| ((op2[0]-48)<<6)|((op3[0]-48)<<3);  
+                    program[counter]=0x7000+((chch)&0x01ff); 
                     counter++; 
                 }
                 else if (strcmp(token,"sub")==0)
@@ -172,7 +172,7 @@ int main()
                     op2 = strtok(NULL, "\n\t\r ");
                     op3 = strtok(NULL, "\n\t\r ");
                     chch = (op1[0] - 48) | ((op2[0] - 48) << 6) | ((op3[0] - 48) << 3);
-                    program[counter]= chch;
+                    program[counter]= 0x7200+((chch)&0x01ff); 
                     counter++;
                 }
                 else if (strcmp(token,"and")==0)
@@ -182,7 +182,8 @@ int main()
                     op2 = strtok(NULL, "\n\t\r ");
                     op3 = strtok(NULL, "\n\t\r ");
                     chch = (op1[0] - 48) | ((op2[0] - 48) << 6) | ((op3[0] - 48) << 3);
-                    program[counter]= chch;
+                    program[counter]= 0x7400+((chch)&0x01ff); 
+                    counter++;
                 }
                 else if (strcmp(token,"or")==0)
                 {
@@ -190,7 +191,7 @@ int main()
                     op2 = strtok(NULL,"\n\t\r ");
                     op3 = strtok(NULL,"\n\t\r ");
                     chch = (op1[0]-48)| ((op2[0]-48)<<6)|((op3[0]-48)<<3);  
-                    program[counter]= chch;
+                    program[counter]= 0x7600+((chch)&0x01ff); 
                     counter++; 
                 }
                 else if (strcmp(token,"xor")==0)
@@ -198,78 +199,51 @@ int main()
                     op1 = strtok(NULL,"\n\t\r ");    
                     op2 = strtok(NULL,"\n\t\r ");
                     op3 = strtok(NULL,"\n\t\r ");
-                    chch = (op1[0]-48)| ((op2[0]-48)<<6)|((op3[0]-48)<<3) | (0b100<<9) | (0b0111)<<12;  
-                    program[counter]= chch;
+                    chch = (op1[0]-48)| ((op2[0]-48)<<6)|((op3[0]-48)<<3);  
+                    program[counter]= 0x7800+((chch)&0x01ff); 
                     counter++; 
                 }                        
                 else if (strcmp(token,"not")==0)
                 {
                     op1 = strtok(NULL,"\n\t\r ");
                     op2 = strtok(NULL,"\n\t\r ");
-                    ch = (op1[0]-48)| ((op2[0]-48)<<3);
-                    program[counter]= chch;
+                    chch = (op1[0]-48)| ((op2[0]-48)<<3);
+                    program[counter]= 0x7e00+((chch)&0x003f); 
                     counter++;
                 }
                 else if (strcmp(token,"mov")==0)
                 {
                     op1 = strtok(NULL, "\n\t\r ");
                     op2 = strtok(NULL, "\n\t\r ");
-                    ch = (op1[0] - 48) | ((op2[0] - 48) << 3);
-                    program[counter] = 0x7E40 + ((ch)&0x00ff);
+                    chch = (op1[0] - 48) | ((op2[0] - 48) << 3);
+                    program[counter] = 0x7e40+((chch)&0x003f);
                     counter++;
                 }
                 else if (strcmp(token,"inc")==0)
                 {
                     op1 = strtok(NULL,"\n\t\r ");
-                    ch = (op1[0]-48)| ((op1[0]-48)<<3);
-                    program[counter]= chch;
+                    chch = (op1[0]-48)| ((op1[0]-48)<<3);
+                    program[counter]= 0x7e80+((chch)&0x003f); 
                     counter++;
                 }
                 else if (strcmp(token,"dec")==0)
                 {
                     op1 = strtok(NULL, "\n\t\r ");
-                    ch = (op1[0] - 48) | ((op1[0] - 48) << 3);
-                    program[counter]= chch;
+                    chch = (op1[0]-48)| ((op1[0]-48)<<3);
+                    program[counter]= 0x7ec0+((chch)&0x003f); 
                     counter++;
                 }
                 else if (strcmp(token, "push") == 0) { //-------------- PUSH -----------------------------
                     //to be added
                     op1 = strtok(NULL, "\n\t\r ");
-                    ch = ((op1[0] - 48) << 6);
-                    switch (*op1) {
-                    case '0':
-                        program[counter] = 32768;
-                        break;
-                    case '1':
-                        program[counter] = 32832;
-                        break;
-                    case '2':
-                        program[counter] = 32896;
-                        break;
-                    case '3':
-                        program[counter] = 32960;
-                        break;
-                    case '4':
-                        program[counter] = 33024;
-                        break;
-                    case '5':
-                        program[counter] = 33088;
-                        break;
-                    case '6':
-                        program[counter] = 33152;
-                        break;
-                    case '7':
-                        program[counter] = 33216;
-                        break;
-                    default:
-                        break;
-                    }
+                    chch = ((op1[0] - 48) << 6);
+                    program[counter] = 0x8000+((chch)&0x01c0);
                     counter++;
                 } else if (strcmp(token, "pop") == 0) { //-------------- POP -----------------------------
                     //to be added
                     op1 = strtok(NULL, "\n\t\r ");
-                    ch = ((op1[0] - 48));
-                    program[counter] = 0x9000 + ((ch)&0x0007);
+                    chch = ((op1[0] - 48));
+                    program[counter] = 0x9000 + ((chch)&0x0007);
                     counter++;
                 } else if (strcmp(token, "call") == 0) //-------------- CALL -----------------------------
                 {
