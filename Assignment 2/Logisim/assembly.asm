@@ -28,12 +28,15 @@ addit       add 6 6 6
             ret
 mult        mov 5 2
             mov 3 6
-            ldi 4 0x0001
-            sub 5 5 4
+            ldi 4 0x0000
+            or 4 5 4
+            jz mult_zero
+            jmp mult_cond
 mult_loop   add 6 6 3
-            dec 5
+mult_cond   dec 5
             jz mult_ret
             jmp mult_loop
+mult_zero   ldi 6 0x0000
 mult_ret    ret
 to_dec      ldi 1 0x6004
             st 1 6
