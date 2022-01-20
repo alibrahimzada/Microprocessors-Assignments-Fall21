@@ -136,24 +136,26 @@ int main()
                 }
                 else if (strcmp(token,"jz")==0) //------------- CONDITIONAL JUMP ------------------
                 {
+                    program[counter] = 0x4000;               //write the incomplete instruction (just opcode) to memory
+                    counter++;
                     op1 = strtok(NULL, "\n\t\r ");           //read the label string
                     jumptable[noofjumps].location = counter; //write the jz instruction's location into the jumptable
                     op2 = (char *)malloc(sizeof(op1));       //allocate space for the label
                     strcpy(op2, op1);                        //copy the label into the allocated space
                     jumptable[noofjumps].name = op2;         //point to the label from the jumptable
                     noofjumps++;                             //skip to the next empty location in jumptable
-                    program[counter] = 0x4000;               //write the incomplete instruction (just opcode) to memory
                     counter++;
                 }
                 else if (strcmp(token,"jmp")==0)  //-------------- JUMP -----------------------------
                 {
+                    program[counter]=0x5000;            //write the incomplete instruction (just opcode) to memory
+                    counter++;
                     op1 = strtok(NULL,"\n\t\r ");            //read the label string
                     jumptable[noofjumps].location = counter;    //write the jz instruction's location into the jumptable 
                     op2=(char*)malloc(sizeof(op1));         //allocate space for the label                  
                     strcpy(op2,op1);                //copy the label into the allocated space
                     jumptable[noofjumps].name=op2;            //point to the label from the jumptable
-                    noofjumps++;                    //skip to the next empty location in jumptable
-                    program[counter]=0x5000;            //write the incomplete instruction (just opcode) to memory
+                    noofjumps++;                    //skip to the next empty location in jumptable                                
                     counter++;                    //skip to the next empty location in memory.
                 }                
                 else if (strcmp(token,"add")==0) //----------------- ADD -------------------------------
@@ -248,6 +250,8 @@ int main()
                 } else if (strcmp(token, "call") == 0) //-------------- CALL -----------------------------
                 {
                     //to be added
+                    program[counter] = 0xa000;               
+                    counter++;
                     op1 = strtok(NULL, "\n\t\r ");
                     jumptable[noofjumps].location = counter; 
                     op2 = (char *)malloc(sizeof(op1));   
@@ -285,7 +289,7 @@ int main()
             j=0;
             while ((j<nooflabels)&&( strcmp(jumptable[i].name , labeltable[j].name ) != 0 ))  //if the label for this jump/jz does not match with the 
                 j++;                                            // jth label in the labeltable, check the next label..
-            program[jumptable[i].location] +=(labeltable[j].location-jumptable[i].location-1)&0x0fff;       //copy the jump address into memory.
+            program[jumptable[i].location] =(labeltable[j].location-jumptable[i].location)&0xffff;       //copy the jump address into memory.
         }                                                     
  
  
