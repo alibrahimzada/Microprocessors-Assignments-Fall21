@@ -1,7 +1,7 @@
 .data
 .code
             ldi 5 0x0000
-            ldi 7 0x1000
+            ldi 7 0x2000
             ldi 3 0x07f0
             ldi 0 isr
             st 3 0
@@ -87,9 +87,11 @@ isr         push 0
             push 3
             push 5
             ldi 0 0x0001
-            add 4 4 0
+            add 5 4 0
+            mov 4 5
+            call to_dec
             ldi 1 0x6003
-            st 1 4
+            st 1 2
             pop 5
             pop 3
             pop 2
