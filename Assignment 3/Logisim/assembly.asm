@@ -20,9 +20,6 @@ main_loop   ldi 3 0x6002
             ldi 1 0x6004
             st 1 2
             jmp main_loop
-addit       add 5 5 1
-            add 5 5 2
-            ret
 to_dec      mov 1 5
             ldi 5 0x0010
             ldi 2 0x0000
@@ -81,6 +78,9 @@ add3_3      ldi 3 0x0300
 add3_4      ldi 3 0x3000
             add 2 2 3
             jmp phase2
+addit       add 5 5 1
+            add 5 5 2
+            ret
 isr         push 0
             push 1
             push 2
